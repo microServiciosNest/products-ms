@@ -22,6 +22,7 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
   findAll(paginationDto: PaginationDto) {
 
     const { page = 0, limit = 0 } = paginationDto;
+    
 
 
     return this.product.findMany({
@@ -32,7 +33,7 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
 
   async findOne(id: number) {
     const product = await this.product.findFirst({
-      where: { id }
+      where: { id , available: true},
     })
 
     if (!product) {
@@ -53,12 +54,19 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
     })
   }
   
-  async remove(id: number) { // Problema de integracion referencial, NO ELIMINAR mejor trabajar con un soft delete
+  async remove(id: number) { 
     
     await this.findOne(id)
 
-    return this.product.delete({
-      where: { id }
+    // return this.product.delete({
+    //   where: { id }
+    // }) // Problema de integracion referencial, NO ELIMINAR mejor trabajar con un soft delete
+    const product =  await this.product.update({
+      where: { id },
+      data:{
+        available: false
+      }
     })
+    return product
   }
 }
