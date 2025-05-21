@@ -44,16 +44,16 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Run tests
+# Product Microservice
 
-```bash
-# unit tests
-$ npm run test
+## Dev
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+1. Clonar el repositorio
+2. Instalar dependencias
+3. Crear un archivo `.env` basado en el `env.template`
+4. Ejecutar migración de prisma `npx prisma migrate dev`
+5. Levantar el servidor de NATS
 ```
-
+docker run -d --name nats-server -p 4222:4222 -p 8222:8222 nats
+```
+6. Ejecutar `npm run start:dev`
