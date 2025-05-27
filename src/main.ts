@@ -12,20 +12,20 @@ async function bootstrap() {
     AppModule,
     {
       transport: Transport.TCP,
-       options: {
+      options: {
         port: envs.port
-
+        
       },
     }
   );
-
+  
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
     })
   );
-
+  
   await app.listen();
 
   Logger.log(`Products microservice running on port ${envs.port}`)
