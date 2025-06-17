@@ -40,7 +40,7 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
         message: `Product with id ${id} not found`,
         status: HttpStatus.BAD_REQUEST
       })
-  }
+    }
 
     return product;
   }
@@ -48,29 +48,49 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
 
   async update(id: number, updateProductDto: UpdateProductDto) {
 
-  const { id: __, ...data } = updateProductDto;
+    const { id: __, ...data } = updateProductDto;
 
-  await this.findOne(id)
+    await this.findOne(id)
 
-  return this.product.update({
-    where: { id },
-    data: data
-  })
-}
+    return this.product.update({
+      where: { id },
+      data: data
+    })
+  }
 
   async remove(id: number) {
 
-  await this.findOne(id)
+    await this.findOne(id)
 
-  // return this.product.delete({
-  //   where: { id }
-  // }) // Problema de integracion referencial, NO ELIMINAR mejor trabajar con un soft delete
-  const product = await this.product.update({
-    where: { id },
-    data: {
-      available: false
+    // return this.product.delete({
+    //   where: { id }
+    // }) // Problema de integracion referencial, NO ELIMINAR mejor trabajar con un soft delete
+    const product = await this.product.update({
+      where: { id },
+      data: {
+        available: false
+      }
+    })
+    return product
+  }
+
+  async validateProduct(ids: number[]) {
+
+    ids = Array.from(new Set(ids)); // Eliminar duplicados
+
+    const products = await this.product.findMany({
+      where: {
+        id: {
+          in: ids
+        }
+      }
+    })
+    if (products.length !== ids.length) {
+      throw new RpcException({
+        message: 'No product ids provided',
+        status: HttpStatus.BAD_REQUEST
+      })
     }
-  })
-  return product
-}
+    return products;
+  }
 }
